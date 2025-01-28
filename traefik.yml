@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  traefik:
+    image: traefik:latest
+    command:
+      - "--log.level=INFO"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--entrypoints.websecure.http.tls=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${HOME}/traefik/certs:/certs:rw
+      - ${HOME}/traefik/traefik.yml:/traefik.yml
+      - ${HOME}/traefik/dynamic.yml:/dynamic.yml
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`traefik.server.local`)"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.tls=true"
+    networks:
+      - docker
+    restart: always
+
+networks:
+  docker:
+    external: true

@@ -1,0 +1,32 @@
+---
+version: '3.5'
+services:
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+#    user: 1000:1000
+    network_mode: 'host' # remove when you move it to the main network. i name it "docker"
+    environment:
+      - TZ=America/Chicago
+    group_add: # add render found with command: getent group
+      - "105"
+    volumes:
+      - /home/superu/jellyfin/library/config:/config
+      - /home/superu/jellyfin/library/cache:/cache
+      - /home/superu/jellyfin/movies:/movies:ro
+      - /home/superu/jellyfin/tvseries:/tvseries:ro
+    ports:
+      - 8096:8096
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    restart: 'unless-stopped'
+
+# enable low power mode support (hardware accel)
+# sudo apt update && sudo apt install -y firmware-linux-nonfree
+# sudo mkdir -p /etc/modprobe.d
+# sudo sh -c "echo 'options i915 enable_guc=2' >> /etc/modprobe.d/i915.conf"
+# sudo update-initramfs -u && sudo update-grub
+#
+# reboot nac
+#
+# sudo dmesg | grep i915sudo cat /sys/kernel/debug/dri/0/gt/uc/guc_infosudo cat /sys/kernel/debug/dri/0/gt/uc/huc_info

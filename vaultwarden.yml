@@ -1,0 +1,11 @@
+# needs https to work
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    ports:
+      - "677:80"
+    restart: unless-stopped
+    volumes:
+      - /home/superu/.vw-data/:/data/
